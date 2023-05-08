@@ -95,6 +95,11 @@ class Chat extends StatefulWidget {
     this.userAgent,
     this.useTopSafeAreaInset,
     this.videoMessageBuilder,
+    this.showMyAvatar = false,
+    this.showMyName = false,
+    this.avatarAtTop = false,
+    this.alwaysShowUserInfo = false,
+    this.usernameOutsideBubble = false,
   });
 
   /// See [Message.audioMessageBuilder].
@@ -277,6 +282,21 @@ class Chat extends StatefulWidget {
   /// Show user names for received messages. Useful for a group chat. Will be
   /// shown only on text messages.
   final bool showUserNames;
+
+  /// See [Message.showMyAvatar].
+  final bool showMyAvatar;
+
+  /// See [Message.showMyName].
+  final bool showMyName;
+
+  /// See [Message.avatarAtTop].
+  final bool avatarAtTop;
+
+  /// See [Message.alwaysShowUserInfo].
+  final bool alwaysShowUserInfo;
+
+  /// Indicates whether to display username outside of the chat bubble. default is false.
+  final bool usernameOutsideBubble;
 
   /// Builds a system message outside of any bubble.
   final Widget Function(types.SystemMessage)? systemMessageBuilder;
@@ -584,9 +604,12 @@ class ChatState extends State<Chat> {
           },
           onMessageVisibilityChanged: widget.onMessageVisibilityChanged,
           onPreviewDataFetched: _onPreviewDataFetched,
-          roundBorder: map['nextMessageInGroup'] == true,
-          showAvatar: map['nextMessageInGroup'] == false,
-          showName: map['showName'] == true,
+          roundBorder:
+              widget.alwaysShowUserInfo || (map['nextMessageInGroup'] == true),
+          showAvatar:
+              widget.alwaysShowUserInfo || (map['nextMessageInGroup'] == false),
+          showName:
+              widget.usernameOutsideBubble || (map['showName'] == true),
           showStatus: map['showStatus'] == true,
           showUserAvatars: widget.showUserAvatars,
           textMessageBuilder: widget.textMessageBuilder,
@@ -594,6 +617,10 @@ class ChatState extends State<Chat> {
           usePreviewData: widget.usePreviewData,
           userAgent: widget.userAgent,
           videoMessageBuilder: widget.videoMessageBuilder,
+          showMyAvatar: widget.showMyAvatar,
+          showMyName: widget.showMyName,
+          avatarAtTop: widget.avatarAtTop,
+          usernameOutsideBubble: widget.usernameOutsideBubble,
         );
       }
 

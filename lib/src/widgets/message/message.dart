@@ -12,6 +12,7 @@ import 'image_message.dart';
 import 'message_status.dart';
 import 'text_message.dart';
 import 'user_avatar.dart';
+import 'user_name.dart';
 
 /// Base widget for all message types in the chat. Renders bubbles around
 /// messages and status. Sets maximum width for a message for
@@ -52,6 +53,10 @@ class Message extends StatelessWidget {
     required this.usePreviewData,
     this.userAgent,
     this.videoMessageBuilder,
+    this.showMyAvatar = false,
+    this.showMyName = false,
+    this.avatarAtTop = false,
+    this.usernameOutsideBubble = false,
   });
 
   /// Build an audio message inside predefined bubble.
@@ -148,6 +153,18 @@ class Message extends StatelessWidget {
   /// See [TextMessage.showName].
   final bool showName;
 
+  /// Indicates whether to display current user's avatar. default is false.
+  final bool showMyAvatar;
+
+  /// Indicates whether to display current user's username. default is false.
+  final bool showMyName;
+
+  /// Indicates whether to align avatar and message bubble at the top of the UI. default is align bottom.
+  final bool avatarAtTop;
+
+  /// Indicates whether to display username outside of the chat bubble. default is false.
+  final bool usernameOutsideBubble;
+
   /// Show message's status.
   final bool showStatus;
 
@@ -230,7 +247,8 @@ class Message extends StatelessWidget {
               right: isMobile ? query.padding.right : 0,
             ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment:
+            avatarAtTop ? CrossAxisAlignment.start : CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         textDirection: bubbleRtlAlignment == BubbleRtlAlignment.left
             ? null
@@ -242,8 +260,14 @@ class Message extends StatelessWidget {
               maxWidth: messageWidth.toDouble(),
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: currentUserIsAuthor
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
               children: [
+                if (showName && usernameOutsideBubble && (!currentUserIsAuthor || showMyName)) ...[
+                  nameBuilder?.call(message.author.id) ??
+                      UserName(author: message.author),
+                ],
                 GestureDetector(
                   onDoubleTap: () => onMessageDoubleTap?.call(context, message),
                   onLongPress: () => onMessageLongPress?.call(context, message),
@@ -273,20 +297,28 @@ class Message extends StatelessWidget {
               ],
             ),
           ),
-          if (currentUserIsAuthor)
+          if (currentUserIsAuthor) ...[
             Padding(
               padding: InheritedChatTheme.of(context).theme.statusIconPadding,
-              child: showStatus
-                  ? GestureDetector(
+              child: Column(
+                children: [
+                  if (showMyAvatar) ...[
+                    _avatarBuilder(),
+                  ],
+                  if (showStatus) ...[
+                    GestureDetector(
                       onLongPress: () =>
                           onMessageStatusLongPress?.call(context, message),
                       onTap: () => onMessageStatusTap?.call(context, message),
                       child: customStatusBuilder != null
                           ? customStatusBuilder!(message, context: context)
                           : MessageStatus(status: message.status),
-                    )
-                  : null,
+                    ),
+                  ],
+                ],
+              ),
             ),
+          ],
         ],
       ),
     );
@@ -362,7 +394,7 @@ class Message extends StatelessWidget {
             ? textMessageBuilder!(
                 textMessage,
                 messageWidth: messageWidth,
-                showName: showName,
+                showName: showName && !usernameOutsideBubble,
               )
             : TextMessage(
                 emojiEnlargementBehavior: emojiEnlargementBehavior,
@@ -371,7 +403,7 @@ class Message extends StatelessWidget {
                 nameBuilder: nameBuilder,
                 onPreviewDataFetched: onPreviewDataFetched,
                 options: textMessageOptions,
-                showName: showName,
+                showName: showName && !usernameOutsideBubble,
                 usePreviewData: usePreviewData,
                 userAgent: userAgent,
               );
