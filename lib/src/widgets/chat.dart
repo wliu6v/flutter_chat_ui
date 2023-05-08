@@ -47,6 +47,7 @@ class Chat extends StatefulWidget {
     this.dateIsUtc = false,
     this.dateLocale,
     this.disableImageGallery,
+    this.disableMessageSpacer,
     this.emojiEnlargementBehavior = EmojiEnlargementBehavior.multi,
     this.emptyState,
     this.fileMessageBuilder,
@@ -167,6 +168,9 @@ class Chat extends StatefulWidget {
 
   /// Disable automatic image preview on tap.
   final bool? disableImageGallery;
+
+  /// Disable automatic spacer between messages in different groups.
+  final bool? disableMessageSpacer;
 
   /// See [Message.emojiEnlargementBehavior].
   final EmojiEnlargementBehavior emojiEnlargementBehavior;
@@ -387,6 +391,7 @@ class ChatState extends State<Chat> {
         lastReadMessageId: widget.scrollToUnreadOptions.lastReadMessageId,
         showUserNames: widget.showUserNames,
         timeFormat: widget.timeFormat,
+        disableMsgSpacer: widget.disableMessageSpacer ?? false,
       );
 
       _chatMessages = result[0] as List<Object>;

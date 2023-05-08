@@ -114,6 +114,7 @@ List<Object> calculateChatMessages(
   String? lastReadMessageId,
   required bool showUserNames,
   DateFormat? timeFormat,
+  bool disableMsgSpacer = false,
 }) {
   final chatMessages = <Object>[];
   final gallery = <PreviewImage>[];
@@ -213,7 +214,9 @@ List<Object> calculateChatMessages(
       'showStatus': message.showStatus ?? true,
     });
 
-    if (!nextMessageInGroup && message.type != types.MessageType.system) {
+    if (!nextMessageInGroup &&
+        message.type != types.MessageType.system &&
+        !disableMsgSpacer) {
       chatMessages.insert(
         0,
         MessageSpacer(
