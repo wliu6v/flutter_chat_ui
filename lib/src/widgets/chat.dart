@@ -450,29 +450,35 @@ class ChatState extends State<Chat> {
                                     BuildContext context,
                                     BoxConstraints constraints,
                                   ) =>
-                                      ChatList(
-                                    bottomWidget: widget.listBottomWidget,
-                                    bubbleRtlAlignment:
-                                        widget.bubbleRtlAlignment!,
-                                    isLastPage: widget.isLastPage,
-                                    itemBuilder: (Object item, int? index) =>
-                                        _messageBuilder(
-                                      item,
-                                      constraints,
-                                      index,
+                                      Padding(
+                                    padding: InheritedChatTheme.of(context)
+                                        .theme
+                                        .contentPadding,
+                                    child: ChatList(
+                                      bottomWidget: widget.listBottomWidget,
+                                      bubbleRtlAlignment:
+                                          widget.bubbleRtlAlignment!,
+                                      isLastPage: widget.isLastPage,
+                                      itemBuilder: (Object item, int? index) =>
+                                          _messageBuilder(
+                                        item,
+                                        constraints,
+                                        index,
+                                      ),
+                                      items: _chatMessages,
+                                      keyboardDismissBehavior:
+                                          widget.keyboardDismissBehavior,
+                                      onEndReached: widget.onEndReached,
+                                      onEndReachedThreshold:
+                                          widget.onEndReachedThreshold,
+                                      scrollController: _scrollController,
+                                      scrollPhysics: widget.scrollPhysics,
+                                      typingIndicatorOptions:
+                                          widget.typingIndicatorOptions,
+                                      useTopSafeAreaInset:
+                                          widget.useTopSafeAreaInset ??
+                                              isMobile,
                                     ),
-                                    items: _chatMessages,
-                                    keyboardDismissBehavior:
-                                        widget.keyboardDismissBehavior,
-                                    onEndReached: widget.onEndReached,
-                                    onEndReachedThreshold:
-                                        widget.onEndReachedThreshold,
-                                    scrollController: _scrollController,
-                                    scrollPhysics: widget.scrollPhysics,
-                                    typingIndicatorOptions:
-                                        widget.typingIndicatorOptions,
-                                    useTopSafeAreaInset:
-                                        widget.useTopSafeAreaInset ?? isMobile,
                                   ),
                                 ),
                               ),
@@ -608,8 +614,7 @@ class ChatState extends State<Chat> {
               widget.alwaysShowUserInfo || (map['nextMessageInGroup'] == true),
           showAvatar:
               widget.alwaysShowUserInfo || (map['nextMessageInGroup'] == false),
-          showName:
-              widget.usernameOutsideBubble || (map['showName'] == true),
+          showName: widget.usernameOutsideBubble || (map['showName'] == true),
           showStatus: map['showStatus'] == true,
           showUserAvatars: widget.showUserAvatars,
           textMessageBuilder: widget.textMessageBuilder,
