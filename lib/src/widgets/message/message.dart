@@ -270,7 +270,9 @@ class Message extends StatelessWidget {
                   ? CrossAxisAlignment.end
                   : CrossAxisAlignment.start,
               children: [
-                if (showName && usernameOutsideBubble && (!currentUserIsAuthor || showMyName)) ...[
+                if (showName &&
+                    usernameOutsideBubble &&
+                    (!currentUserIsAuthor || showMyName)) ...[
                   nameBuilder?.call(message.author.id) ??
                       UserName(author: message.author),
                 ],
